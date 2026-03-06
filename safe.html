@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ElderCare App</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        // Soft Clay Palette
+                        "clay-bg": "#F5F2F2", // Soft Grey Background
+                        "clay-card": "#F0F0F3", // Soft broken white
+                        "clay-text": "#4A5568", // Dark slate for readable text
+                        "clay-subtext": "#A0AEC0",
+
+                        // Accents (Pastel but visible)
+                        "clay-primary": "#7A9E9F", // Muted Teal
+                        "clay-accent": "#D9A578", // Terracotta
+                        "clay-success": "#88B04B", // Muted Green
+                        "clay-danger": "#E07A5F", // Muted Red / Terra
+
+                        // Legacy mappings for compatibility (overridden)
+                        primary: "#7A9E9F",
+                        "elder-bg": "#F5F2F2",
+                        "background-light": "#F5F2F2",
+                        "background-dark": "#2D3748", // Darker blue-grey
+                        "surface-light": "#F0F0F3",
+                        "surface-dark": "#4A5568",
+                        success: "#88B04B",
+                        warning: "#F2C078",
+                        danger: "#E07A5F",
+                        "status-green": "#88B04B",
+                        "card-light": "#F0F0F3",
+                        "card-dark": "#4A5568",
+                    },
+                    fontFamily: {
+                        sans: ["Nunito", "sans-serif"],
+                        display: ["Nunito", "sans-serif"],
+                    },
+                    boxShadow: {
+                        // The Core "Clay" Shadows - Soft, deep, multi-layered
+                        'clay-card': '9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5)',
+                        'clay-btn': '6px 6px 10px 0 rgba(163,177,198, 0.7), -6px -6px 10px 0 rgba(255,255,255, 0.8)',
+                        'clay-btn-pressed': 'inset 4px 4px 8px 0 rgba(163,177,198, 0.7), inset -4px -4px 8px 0 rgba(255,255,255, 0.8)',
+                        'clay-inner': 'inset 6px 6px 10px 0 rgba(163,177,198, 0.7), inset -6px -6px 10px 0 rgba(255,255,255, 0.8)',
+                        'clay-float': '20px 20px 60px #bebebe, -20px -20px 60px #ffffff',
+                    },
+                    borderRadius: {
+                        'clay': '24px', // Standard rounded look
+                        'clay-sm': '16px',
+                        'clay-lg': '32px',
+                    }
+                },
+            },
+        };
+    </script>
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+            background-color: theme('colors.clay-bg');
+            color: theme('colors.clay-text');
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; 
+            /* Fill 1 looks softer/bubbly */
+        }
+
+        /* Clay Component Classes */
+        .clay-card {
+            @apply bg-clay-card rounded-clay shadow-clay-card border border-white/40;
+        }
+        
+        .clay-btn-primary {
+            @apply bg-clay-primary text-white shadow-clay-btn rounded-clay font-bold transition-all active:shadow-clay-btn-pressed active:scale-[0.98];
+        }
+        
+        .clay-btn-neutral {
+            @apply bg-clay-card text-clay-text shadow-clay-btn rounded-clay font-bold transition-all active:shadow-clay-btn-pressed active:scale-[0.98];
+        }
+
+        .clay-btn-accent {
+            @apply bg-clay-accent text-white shadow-clay-btn rounded-clay font-bold transition-all active:shadow-clay-btn-pressed active:scale-[0.98];
+        }
+        
+        .clay-btn-danger {
+            @apply bg-clay-danger text-white shadow-clay-btn rounded-clay font-bold transition-all active:shadow-clay-btn-pressed active:scale-[0.98];
+        }
+
+        .clay-input {
+            @apply bg-clay-bg shadow-clay-inner rounded-clay px-5 py-4 outline-none border-none focus:ring-2 focus:ring-clay-primary/50 transition-all;
+        }
+
+        /* Existing Utilities preserved but updated */
+        .page-hidden { display: none !important; }
+        
+        /* Smooth wavy background pattern */
+        .bg-wave-pattern {
+             background-image: 
+                radial-gradient(at 0% 0%, hsla(189,19%,56%,0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(28,56%,66%,0.2) 0px, transparent 50%);
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+
+<body class="bg-clay-bg text-clay-text min-h-screen bg-wave-pattern selection:bg-clay-accent selection:text-white">
+
+    <!-- PAGE 1: WELCOME SCREEN -->
+    <!-- PAGE 1: WELCOME SCREEN -->
+    <div id="view-welcome" class="w-full max-w-md mx-auto min-h-screen flex flex-col items-center justify-center p-6">
+        <div class="clay-card w-full flex flex-col items-center p-8 relative overflow-hidden">
+            <!-- Decorative Blob -->
+            <div class="absolute -top-12 -left-12 w-48 h-48 bg-clay-primary/20 rounded-full blur-3xl"></div>
+
+            <div class="mt-4 mb-8 w-full max-w-[280px]">
+                <div
+                    class="relative w-full aspect-[4/5] rounded-clay-lg overflow-hidden shadow-clay-inner border-4 border-white/50">
+                    <img alt="Elderly woman smiling while reading a book" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuARv6DClLCn9fiu-2FLv9uIgQZV4Z_TJ4segEjIO6IjqhbAyjbVkvcU2f-VbldbBsMCz36lO7w1ickMOdyxpoj8ar89bqPNwZBrQRUVHMZosRe-keUmpp7utEak0HgDagdTSLQftVxdYH8Sd6akhYeLcZAyN5-r1h3EN6bDaxzOnR8ObahQc3wEADykGABh-S8G6pYzSwrSkKvIvXcbaNq-IFbbeAcqGy8OccB9KfeoWQR1O8YAeh2_IkD6phQatuG7piq85HbwoxHH" />
+                    <div
+                        class="absolute top-4 right-4 bg-white/60 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 shadow-sm border border-white/40">
+                        <span
+                            class="flex h-2.5 w-2.5 rounded-full bg-clay-success shadow-[0_0_10px_rgba(136,176,75,0.6)]"></span>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-clay-text">Safe</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-clay-text leading-tight mb-3">
+                    Stay <span class="text-clay-primary">Connected</span>,<br>Stay Safe.
+                </h1>
+                <p class="text-clay-subtext text-lg font-medium leading-relaxed max-w-[280px] mx-auto">
+                    Peace of mind for you and your loved ones.
+                </p>
+            </div>
+
+            <div class="space-y-4 w-full">
+                <button onclick="navigateTo('view-profile')"
+                    class="clay-btn-primary w-full py-4 text-lg flex items-center justify-center gap-2">
+                    Get Started
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <button
+                    class="w-full py-4 text-clay-text font-bold hover:bg-black/5 rounded-clay transition-all active:scale-95">
+                    Login
+                </button>
+            </div>
+
+            <div class="mt-6 text-center">
+                <p class="text-[10px] text-clay-subtext uppercase tracking-[0.1em] font-bold">
+                    Trusted by 50,000+ Families
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: CREATE PROFILE -->
+    <div id="view-profile" class="page-hidden w-full max-w-md mx-auto min-h-screen flex flex-col p-6">
+        <header class="flex items-center justify-between mb-8">
+            <button onclick="navigateTo('view-welcome')"
+                class="w-12 h-12 flex items-center justify-center rounded-clay bg-clay-card shadow-clay-btn text-clay-text active:shadow-clay-btn-pressed transition-all">
+                <span class="material-symbols-outlined font-bold">arrow_back_ios_new</span>
+            </button>
+            <div class="px-4 py-2 rounded-clay bg-clay-card shadow-clay-inner">
+                <span class="text-xs font-bold text-clay-primary uppercase tracking-widest">Step 1 of 4</span>
+            </div>
+            <div class="w-12"></div>
+        </header>
+
+        <div class="clay-card p-8 flex-1 flex flex-col">
+            <h1 class="text-3xl font-extrabold text-clay-text tracking-tight mb-2">Create Profile</h1>
+            <p class="text-clay-subtext mb-8 leading-relaxed">
+                Tell us about yourself so we can help you better.
+            </p>
+
+            <div class="flex flex-col items-center mb-8">
+                <div class="relative group cursor-pointer">
+                    <div
+                        class="w-32 h-32 rounded-full bg-clay-bg shadow-clay-inner flex items-center justify-center overflow-hidden border-4 border-clay-bg">
+                        <span
+                            class="material-symbols-outlined text-6xl text-clay-subtext group-hover:text-clay-primary transition-colors">person</span>
+                    </div>
+                    <button
+                        class="absolute bottom-0 right-0 bg-clay-accent text-white w-10 h-10 rounded-full flex items-center justify-center shadow-clay-btn">
+                        <span class="material-symbols-outlined text-xl">photo_camera</span>
+                    </button>
+                </div>
+            </div>
+
+            <section class="space-y-5 flex-1">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-clay-text uppercase tracking-wide ml-2">Full Name</label>
+                    <input class="w-full clay-input text-lg font-bold text-clay-text placeholder:text-clay-subtext/50"
+                        placeholder="" type="text" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-clay-text uppercase tracking-wide ml-2">Age</label>
+                        <input class="w-full clay-input text-lg font-bold text-clay-text" placeholder=""
+                            type="number" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-clay-text uppercase tracking-wide ml-2">Blood
+                            Group</label>
+                        <div class="relative">
+                            <select class="w-full clay-input text-lg font-bold text-clay-text appearance-none">
+                                <option>O+</option>
+                                <option>A+</option>
+                                <option>B+</option>
+                                <option>AB+</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-clay-subtext">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Safety Check Settings -->
+            <section class="mt-8 space-y-4">
+                <div class="flex items-center gap-2 ml-2">
+                    <span class="material-symbols-outlined text-clay-primary text-xl">security</span>
+                    <h3 class="text-xs font-bold text-clay-text uppercase tracking-widest">Safety Check Settings</h3>
+                </div>
+
+                <div class="p-5 bg-clay-bg/50 rounded-clay border border-white/40 shadow-clay-inner space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-clay-subtext uppercase tracking-wider ml-1">Daily
+                            Frequency</label>
+                        <div class="relative">
+                            <select id="checkinFrequency" onchange="toggleCheckinTimings()"
+                                class="w-full clay-input text-sm font-bold text-clay-text appearance-none pr-10">
+                                <option value="1">Appears Once Daily</option>
+                                <option value="2" selected>Appears Twice Daily</option>
+                                <option value="3">Appears Thrice Daily</option>
+                            </select>
+                            <span
+                                class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-clay-subtext">expand_more</span>
+                        </div>
+                    </div>
+
+                    <div id="timingContainer" class="space-y-4 pt-2 border-t border-white/20">
+                        <!-- Timings will be injected here by toggleCheckinTimings() -->
+                    </div>
+                </div>
+            </section>
+
+            <div class="pt-10 mt-auto">
+                <button onclick="navigateTo('view-safety-permissions')"
+                    class="clay-btn-primary w-full py-5 text-xl flex items-center justify-center gap-3">
+                    Save & Continue
+                    <span class="material-symbols-outlined font-bold">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: SAFETY PERMISSIONS (NEW) -->
+    <div id="view-safety-permissions" class="page-hidden w-full max-w-md mx-auto min-h-screen flex flex-col p-6">
+        <header class="flex items-center justify-between mb-8">
+            <button onclick="navigateTo('view-profile')"
+                class="w-12 h-12 flex items-center justify-center rounded-clay bg-clay-card shadow-clay-btn text-clay-text active:shadow-clay-btn-pressed transition-all">
+                <span class="material-symbols-outlined font-bold">arrow_back_ios_new</span>
+            </button>
+            <div class="px-4 py-2 rounded-clay bg-clay-card shadow-clay-inner">
+                <span class="text-xs font-bold text-clay-primary uppercase tracking-widest">Step 2 of 4</span>
+            </div>
+            <div class="w-12"></div>
+        </header>
+
+        <div class="clay-card p-6 flex-1 flex flex-col">
+            <header class="text-center mb-6">
+                <h1 class="text-clay-text text-2xl font-extrabold leading-tight mb-2">Your Safety Matters</h1>
+                <p class="text-clay-subtext text-base leading-relaxed">
+                    To protect you in an emergency, we need your permission:
+                </p>
+            </header>
+
+            <div class="space-y-4 flex-1">
+                <!-- Item 1 -->
+                <div
+                    class="bg-clay-bg rounded-clay p-4 flex items-start gap-4 shadow-clay-inner border border-white/40">
+                    <div
+                        class="flex items-center justify-center rounded-clay-sm bg-clay-card text-clay-primary shadow-clay-btn shrink-0 size-12">
+                        <span class="material-symbols-outlined text-2xl">videocam</span>
+                    </div>
+                    <div>
+                        <p class="text-clay-text text-base font-bold">Camera Access</p>
+                        <p class="text-clay-subtext text-sm leading-snug">Video calls for help.</p>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div
+                    class="bg-clay-bg rounded-clay p-4 flex items-start gap-4 shadow-clay-inner border border-white/40">
+                    <div
+                        class="flex items-center justify-center rounded-clay-sm bg-clay-card text-clay-primary shadow-clay-btn shrink-0 size-12">
+                        <span class="material-symbols-outlined text-2xl">mic</span>
+                    </div>
+                    <div>
+                        <p class="text-clay-text text-base font-bold">Microphone Access</p>
+                        <p class="text-clay-subtext text-sm leading-snug">Voice commands.</p>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div
+                    class="bg-clay-bg rounded-clay p-4 flex items-start gap-4 shadow-clay-inner border border-white/40">
+                    <div
+                        class="flex items-center justify-center rounded-clay-sm bg-clay-card text-clay-primary shadow-clay-btn shrink-0 size-12">
+                        <span class="material-symbols-outlined text-2xl">contact_phone</span>
+                    </div>
+                    <div>
+                        <p class="text-clay-text text-base font-bold">Emergency Contacts</p>
+                        <p class="text-clay-subtext text-sm leading-snug">Alerting family.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 px-4 py-3 rounded-clay bg-clay-success/10 border border-clay-success/20 text-center">
+                <p class="text-clay-success text-xs font-bold leading-relaxed">
+                    <span class="material-symbols-outlined text-sm align-middle mr-1">verified_user</span>
+                    Private & Secure. Emergency use only.
+                </p>
+            </div>
+
+            <div class="pt-6 mt-auto">
+                <button onclick="navigateTo('view-emergency-setup')"
+                    class="clay-btn-primary w-full py-5 text-xl flex items-center justify-center gap-3">
+                    Allow & Continue
+                </button>
+                <button class="w-full mt-3 py-2 text-clay-subtext font-bold text-sm">
+                    Learn more about privacy
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: EMERGENCY SETUP -->
+    <div id="view-emergency-setup" class="page-hidden w-full max-w-md mx-auto min-h-screen flex flex-col p-6">
+        <header class="flex items-center justify-between mb-8">
+            <button onclick="navigateTo('view-safety-permissions')"
+                class="w-12 h-12 flex items-center justify-center rounded-clay bg-clay-card shadow-clay-btn text-clay-text active:shadow-clay-btn-pressed transition-all">
+                <span class="material-symbols-outlined font-bold">arrow_back_ios_new</span>
+            </button>
+            <div class="px-4 py-2 rounded-clay bg-clay-card shadow-clay-inner">
+                <span class="text-xs font-bold text-clay-primary uppercase tracking-widest">Step 3 of 4</span>
+            </div>
+            <div class="w-12"></div>
+        </header>
+
+        <div class="clay-card p-6 flex-1 flex flex-col overflow-y-auto no-scrollbar">
+            <h1 class="text-clay-text text-2xl font-extrabold leading-tight mb-2">Emergency Contacts</h1>
+            <p class="text-clay-subtext mb-6">
+                Who should we call if you need help?
+            </p>
+
+            <div class="space-y-4 mb-6">
+                <!-- Contact 1 -->
+                <div class="bg-clay-bg rounded-clay p-4 relative shadow-clay-inner border border-white/40">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-clay-subtext uppercase tracking-wide">Emergency
+                            Contact</span>
+                        <button class="text-clay-danger hover:text-clay-danger/80">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="contactName" class="w-full clay-input bg-clay-card text-sm py-3"
+                            placeholder="Name" />
+                        <input id="contactPhone" class="w-full clay-input bg-clay-card text-sm py-3"
+                            placeholder="Phone Number" />
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-clay-text uppercase tracking-wide ml-2">Mode of
+                                Relation</label>
+                            <div class="relative">
+                                <select id="contactRelation"
+                                    class="w-full clay-input bg-clay-card text-sm py-3 appearance-none">
+                                    <option value="" disabled selected>Select Relation</option>
+                                    <option value="children">Children</option>
+                                    <option value="neighbour">Neighbour</option>
+                                    <option value="hospital">Hospital</option>
+                                </select>
+                                <span
+                                    class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-clay-subtext">expand_more</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <button onclick="resetContactForm()"
+                    class="w-full py-4 border-2 border-dashed border-clay-subtext/30 rounded-clay text-clay-subtext font-bold hover:bg-clay-bg/50 transition-colors flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    Add Another Contact
+                </button>
+            </div>
+
+            <div class="pt-4 mt-auto">
+                <button onclick="navigateTo('view-dashboard')"
+                    class="clay-btn-success w-full py-5 text-xl flex items-center justify-center gap-3 bg-clay-success text-white">
+                    <span class="material-symbols-outlined font-bold">check_circle</span>
+                    Complete Setup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 5: MAIN DASHBOARD -->
+    <div id="view-dashboard" class="page-hidden w-full max-w-md mx-auto min-h-screen flex flex-col p-6 bg-wave-pattern">
+        <!-- Top Bar -->
+        <header class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-12 h-12 rounded-full bg-clay-bg shadow-clay-inner border-2 border-white flex items-center justify-center overflow-hidden">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuARv6DClLCn9fiu-2FLv9uIgQZV4Z_TJ4segEjIO6IjqhbAyjbVkvcU2f-VbldbBsMCz36lO7w1ickMOdyxpoj8ar89bqPNwZBrQRUVHMZosRe-keUmpp7utEak0HgDagdTSLQftVxdYH8Sd6akhYeLcZAyN5-r1h3EN6bDaxzOnR8ObahQc3wEADykGABh-S8G6pYzSwrSkKvIvXcbaNq-IFbbeAcqGy8OccB9KfeoWQR1O8YAeh2_IkD6phQatuG7piq85HbwoxHH"
+                        class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h2 class="text-lg font-extrabold text-clay-text leading-none">Hi, Martha</h2>
+                    <p class="text-xs font-bold text-clay-primary uppercase tracking-wider mt-1">Guardian Active</p>
+                </div>
+            </div>
+            <button
+                class="w-12 h-12 rounded-clay bg-clay-card shadow-clay-btn text-clay-text flex items-center justify-center active:shadow-clay-btn-pressed transition-all">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+        </header>
+
+        <!-- Main Status Area -->
+        <div class="flex-1 flex flex-col items-center justify-center -mt-8">
+            <div class="mb-10 relative">
+                <div class="absolute inset-0 bg-clay-primary/20 blur-3xl rounded-full transform scale-150"></div>
+                <!-- The Big Floating Puck -->
+                <button onclick="sendOkSms()"
+                    class="relative w-64 h-64 rounded-full bg-clay-card shadow-clay-float flex items-center justify-center active:scale-95 transition-transform duration-200 group border-8 border-clay-bg">
+
+                    <!-- Inner indented ring (Pressed effect visually) -->
+                    <div
+                        class="absolute inset-4 rounded-full shadow-clay-inner bg-clay-card flex items-center justify-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <span
+                                class="material-symbols-outlined text-6xl text-clay-success drop-shadow-sm group-active:scale-90 transition-transform">check_circle</span>
+                            <span class="text-3xl font-black text-clay-text tracking-widest text-shadow-sm">I'M
+                                OK</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+
+            <p class="text-center text-clay-subtext font-bold text-sm mb-12">
+                Last check-in: <span class="text-clay-text">10:42 AM</span>
+            </p>
+
+            <!-- Quick Stats Grid -->
+            <div class="grid grid-cols-2 gap-4 w-full">
+                <button onclick="navigateTo('view-activity-history')"
+                    class="clay-card p-5 flex flex-col items-center gap-2 hover:translate-y-[-2px] transition-transform active:translate-y-[1px]">
+                    <span class="material-symbols-outlined text-clay-danger text-3xl">favorite</span>
+                    <span class="text-2xl font-black text-clay-text">72</span>
+                    <span class="text-xs font-bold text-clay-subtext uppercase">Heart Rate</span>
+                </button>
+
+                <div class="clay-card p-5 flex flex-col items-center gap-2">
+                    <span class="material-symbols-outlined text-clay-primary text-3xl">directions_walk</span>
+                    <span class="text-2xl font-black text-clay-text">1,240</span>
+                    <span class="text-xs font-bold text-clay-subtext uppercase">Steps</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SOS & Nav -->
+        <div class="mt-8 pb-4">
+            <button ondblclick="triggerEmergencyCall()"
+                class="w-full clay-btn-danger py-5 flex items-center justify-center gap-3 text-lg tracking-widest relative overflow-hidden group">
+                <div
+                    class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform">
+                </div>
+                <span class="material-symbols-outlined animate-pulse">emergency_share</span>
+                EMERGENCY SOS
+            </button>
+        </div>
+
+        <!-- Bottom Nav (Simplified) -->
+        <nav
+            class="sticky bottom-0 bg-clay-bg/95 backdrop-blur-md pt-2 pb-6 flex justify-around items-center border-t border-white/20">
+            <button onclick="navigateTo('view-dashboard')" class="flex flex-col items-center text-clay-primary">
+                <span class="material-symbols-outlined fill-current">home</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Home</span>
+            </button>
+            <button onclick="navigateTo('view-activity-history')"
+                class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">favorite</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Health</span>
+            </button>
+            <button class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">group</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Family</span>
+            </button>
+            <button class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+
+    <!-- PAGE 7: ACTIVITY HISTORY -->
+    <div id="view-activity-history"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-hidden bg-wave-pattern text-gray-800 font-display">
+        <!-- TopAppBar -->
+        <header class="sticky top-0 z-20 bg-clay-bg/90 backdrop-blur-md px-4 pt-6 pb-2">
+            <div class="flex items-center justify-between mb-4">
+                <button
+                    class="w-10 h-10 rounded-clay bg-clay-card shadow-clay-btn flex items-center justify-center active:shadow-clay-btn-pressed transition-all text-clay-text"
+                    onclick="navigateTo('view-dashboard')">
+                    <span class="material-symbols-outlined">arrow_back_ios_new</span>
+                </button>
+                <h2 class="text-xl font-extrabold leading-tight text-clay-text tracking-tight flex-1 text-center pr-10">
+                    Activity History
+                </h2>
+            </div>
+            <!-- Tabs / Filter Chips -->
+            <div class="flex gap-3 pb-2 overflow-x-auto no-scrollbar">
+                <button class="clay-btn-primary px-6 py-2 text-sm">All</button>
+                <button onclick="navigateTo('view-missed-alert-detail')"
+                    class="clay-btn-neutral px-6 py-2 text-sm text-clay-subtext hover:text-clay-text">Check-ins</button>
+                <button
+                    class="clay-btn-neutral px-6 py-2 text-sm text-clay-subtext hover:text-clay-text">Alerts</button>
+            </div>
+        </header>
+
+        <!-- Main Timeline Content -->
+        <main class="flex-1 overflow-y-auto px-4 pb-24">
+            <!-- Section: Today -->
+            <div class="mt-6 mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-clay-subtext mb-4 px-1">
+                    Today
+                </h3>
+                <div class="space-y-4 relative">
+                    <!-- Connector Line -->
+                    <div class="absolute left-[27px] top-6 bottom-6 w-[2px] bg-clay-subtext/20 -z-10"></div>
+
+                    <div class="flex gap-4 items-start" onclick="navigateTo('view-missed-alert-detail')">
+                        <div class="flex flex-col items-center">
+                            <div
+                                class="size-14 rounded-full bg-clay-success/20 flex items-center justify-center text-clay-success border-4 border-clay-bg shadow-clay-inner">
+                                <span class="material-symbols-outlined text-3xl">check_circle</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 clay-card p-5 group hover:translate-x-1 transition-transform cursor-pointer">
+                            <div class="flex justify-between items-start">
+                                <p class="text-lg font-bold text-clay-text">Checked In</p>
+                                <span
+                                    class="text-xs font-bold text-clay-subtext bg-clay-bg px-2 py-1 rounded-full shadow-clay-inner">9:00
+                                    AM</span>
+                            </div>
+                            <p class="text-sm text-clay-subtext mt-1 font-bold">Daily safety confirmation received.</p>
+                        </div>
+                    </div>
+
+                    <!-- Event Card: Missed Alert -->
+                    <div class="flex gap-4 items-start" onclick="navigateTo('view-missed-alert-detail')">
+                        <div class="flex flex-col items-center">
+                            <div
+                                class="size-14 rounded-full bg-clay-danger/20 flex items-center justify-center text-clay-danger border-4 border-clay-bg shadow-clay-inner">
+                                <span class="material-symbols-outlined text-3xl">notification_important</span>
+                            </div>
+                        </div>
+                        <div
+                            class="flex-1 clay-card p-5 border-l-4 border-clay-danger cursor-pointer active:scale-95 transition-transform">
+                            <div class="flex justify-between items-start">
+                                <p class="text-lg font-bold text-clay-text">Missed Alert</p>
+                                <span
+                                    class="text-xs font-bold text-clay-danger bg-clay-danger/10 px-2 py-1 rounded-full">2:30
+                                    PM</span>
+                            </div>
+                            <p class="text-sm text-clay-subtext mt-1 font-bold">Standard check-in window passed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Yesterday -->
+            <div class="mt-8 mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-clay-subtext mb-4 px-1">
+                    Yesterday</h3>
+                <div class="space-y-4 relative">
+                    <!-- Connector Line -->
+                    <div class="absolute left-[27px] top-6 bottom-6 w-[2px] bg-clay-subtext/20 -z-10"></div>
+
+                    <!-- Event Card: Emergency Call -->
+                    <div class="flex gap-4 items-start">
+                        <div class="flex flex-col items-center">
+                            <div
+                                class="size-14 rounded-full bg-clay-danger flex items-center justify-center text-white border-4 border-clay-bg shadow-clay-float">
+                                <span class="material-symbols-outlined text-3xl">e911_emergency</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 clay-card p-5 bg-clay-danger/5 border border-clay-danger/20">
+                            <div class="flex justify-between items-start">
+                                <p class="text-lg font-bold text-clay-danger">Emergency Call</p>
+                                <span class="text-xs font-bold text-clay-danger">11:15 PM</span>
+                            </div>
+                            <p class="text-sm text-clay-danger/80 mt-1 font-bold">SOS button triggered.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State Helper -->
+            <div class="py-12 flex flex-col items-center text-center">
+                <div class="w-16 h-16 rounded-full bg-clay-bg shadow-clay-inner flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-4xl text-clay-subtext">calendar_today</span>
+                </div>
+                <p class="text-clay-subtext text-sm font-bold">End of available history.</p>
+            </div>
+        </main>
+
+        <!-- BottomNavBar -->
+        <nav
+            class="sticky bottom-0 bg-clay-bg/95 backdrop-blur-md pt-2 pb-6 flex justify-around items-center border-t border-white/20">
+            <button onclick="navigateTo('view-dashboard')"
+                class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">home</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Home</span>
+            </button>
+            <button class="flex flex-col items-center text-clay-primary">
+                <span class="material-symbols-outlined fill-current">favorite</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Health</span>
+            </button>
+            <button class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">group</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Family</span>
+            </button>
+            <button class="flex flex-col items-center text-clay-subtext hover:text-clay-text">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="text-[10px] font-bold uppercase mt-1">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- PAGE 11: MISSED ALERT DETAIL -->
+    <div id="view-missed-alert-detail"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-y-auto no-scrollbar bg-wave-pattern text-gray-800 font-display">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 bg-clay-bg/90 backdrop-blur-md px-4 pt-6 pb-2 mb-4">
+            <div class="flex items-center justify-between">
+                <button
+                    class="w-10 h-10 rounded-clay bg-clay-card shadow-clay-btn flex items-center justify-center active:shadow-clay-btn-pressed transition-all text-clay-text"
+                    onclick="navigateTo('view-activity-history')">
+                    <span class="material-symbols-outlined">arrow_back_ios_new</span>
+                </button>
+                <h2 class="text-xl font-extrabold leading-tight text-clay-text tracking-tight flex-1 text-center pr-10">
+                    Alert Details
+                </h2>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col items-center justify-center px-6 py-4 text-center">
+            <!-- Icon Section -->
+            <div
+                class="mb-10 w-32 h-32 rounded-full bg-clay-danger/8 flex items-center justify-center shadow-clay-inner relative">
+                <div class="absolute inset-0 bg-clay-danger/5 animate-pulse rounded-full"></div>
+                <span class="material-symbols-outlined text-clay-danger text-6xl relative">notification_important</span>
+            </div>
+
+            <!-- Headline Section -->
+            <div class="mb-10">
+                <h1 class="text-clay-text tracking-tight text-4xl font-black leading-tight mb-4">
+                    You have missed to press</h1>
+                <p class="text-clay-danger text-2xl font-extrabold leading-relaxed">
+                    Snoozed for 15 minutes
+                </p>
+            </div>
+
+            <!-- Next Check-in Card -->
+            <div class="clay-card p-8 w-full shadow-clay-float border-2 border-clay-bg mb-8">
+                <p class="text-clay-subtext text-xs font-black uppercase tracking-widest mb-3">Next Check-in</p>
+                <div class="flex items-center justify-center gap-3">
+                    <span class="material-symbols-outlined text-clay-primary text-3xl">schedule</span>
+                    <p id="next-checkin-time" class="text-5xl font-black text-clay-text tabular-nums tracking-tighter">
+                        --:--</p>
+                </div>
+            </div>
+
+            <!-- Next Alert Action -->
+            <button onclick="navigateTo('view-status-confirmation')"
+                class="w-full clay-btn-primary py-5 text-xl flex items-center justify-center gap-3 shadow-clay-btn">
+                <span class="material-symbols-outlined">navigate_next</span>
+                Next Alert
+            </button>
+        </div>
+
+        <!-- Footer / SOS Area -->
+        <div class="p-6 pb-10">
+            <button ondblclick="triggerEmergencyCall()"
+                class="w-full clay-btn-danger py-6 flex items-center justify-center gap-4 text-xl tracking-[0.15em] font-black relative overflow-hidden group shadow-clay-float active:shadow-clay-inner">
+                <div
+                    class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                </div>
+                <span class="material-symbols-outlined text-3xl animate-pulse">emergency_share</span>
+                EMERGENCY SOS
+            </button>
+            <p class="text-center text-clay-danger/60 text-[10px] font-black uppercase tracking-[0.2em] mt-4">
+                Double-tap to trigger alert
+            </p>
+        </div>
+    </div>
+
+
+    <!-- PAGE 9: MISSED ALERT -->
+    <div id="view-missed-checkin"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-y-auto no-scrollbar bg-wave-pattern text-gray-800 font-display">
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col items-center justify-center px-6 py-4">
+            <!-- Headline Section -->
+            <div class="text-center mb-10">
+                <h1 class="text-clay-danger tracking-tighter text-6xl font-black leading-tight mb-4 drop-shadow-md">
+                    MISSED ALERT</h1>
+                <p class="text-clay-subtext text-lg font-bold leading-relaxed">Safety confirmation required immediately.
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="w-full space-y-6">
+                <!-- Primary Action Button -->
+                <button onclick="navigateTo('view-dashboard')"
+                    class="clay-btn-success w-full py-8 text-4xl font-black tracking-widest uppercase shadow-clay-float hover:scale-[1.02] transition-transform">
+                    I'M OK
+                </button>
+
+                <!-- Snooze Button -->
+                <button onclick="alert('Paused for 15 minutes')"
+                    class="w-full clay-btn-neutral py-5 text-xl font-bold flex items-center justify-center gap-3 shadow-clay-btn">
+                    <span class="material-symbols-outlined text-clay-primary text-2xl">snooze</span>
+                    Snooze 15m
+                </button>
+
+                <!-- SOS Emergency Button -->
+                <button ondblclick="triggerEmergencyCall()"
+                    class="w-full clay-btn-danger py-6 text-2xl font-black flex items-center justify-center gap-3 shadow-clay-float active:shadow-clay-inner group relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform">
+                    </div>
+                    <span class="material-symbols-outlined text-3xl animate-pulse">emergency_share</span>
+                    EMERGENCY SOS
+                </button>
+                <p class="text-center text-clay-danger/70 text-xs font-bold uppercase tracking-widest mt-2">Double-tap
+                    for Emergency</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 12: STATUS CONFIRMATION -->
+    <div id="view-status-confirmation"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-y-auto no-scrollbar bg-clay-bg font-display">
+        <header class="p-4">
+            <button onclick="navigateTo('view-missed-alert-detail')"
+                class="w-10 h-10 rounded-clay bg-clay-card shadow-clay-btn flex items-center justify-center text-clay-text">
+                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </button>
+        </header>
+
+        <div class="flex-1 flex flex-col items-center justify-center px-6">
+            <button onclick="sendSafetySms()"
+                class="relative w-72 h-72 rounded-full bg-clay-card shadow-clay-float flex items-center justify-center active:scale-95 transition-transform duration-200 group border-8 border-clay-bg">
+                <div
+                    class="absolute inset-4 rounded-full shadow-clay-inner bg-clay-card flex items-center justify-center">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-7xl text-clay-success">verified</span>
+                        <span class="text-4xl font-black text-clay-text tracking-widest">I'M OK</span>
+                    </div>
+                </div>
+            </button>
+            <p class="mt-12 text-clay-subtext font-bold text-center">Tap to confirm your safety.</p>
+        </div>
+
+        <footer class="p-8 flex justify-center">
+            <button onclick="navigateTo('view-emergency-timer')"
+                class="w-16 h-16 rounded-full bg-clay-danger shadow-clay-btn flex items-center justify-center text-white active:shadow-clay-inner">
+                <span class="material-symbols-outlined text-3xl">emergency</span>
+            </button>
+        </footer>
+    </div>
+
+    <!-- PAGE 13: EMERGENCY TIMER -->
+    <div id="view-emergency-timer"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-y-auto no-scrollbar bg-emergency-red/95 font-display text-white">
+        <div class="flex-1 flex flex-col items-center justify-center px-6 text-center">
+            <div class="w-48 h-48 rounded-full border-8 border-white/20 flex items-center justify-center mb-8 relative">
+                <div class="absolute inset-x-0 bottom-0 bg-white/10 rounded-full blur-2xl h-1/2"></div>
+                <p id="emergency-timer-display" class="text-7xl font-black tabular-nums">05:00</p>
+            </div>
+
+            <h1 class="text-4xl font-black mb-4">Call will be initiated</h1>
+            <p class="text-white/80 text-xl font-bold mb-12">Emergency protocol starting in minutes.</p>
+
+            <div class="w-full space-y-6">
+                <!-- Cancel Action -->
+                <button onclick="cancelEmergencyTimer()"
+                    class="w-full py-6 rounded-clay bg-white text-clay-danger text-2xl font-black shadow-clay-float active:scale-95 transition-transform">
+                    Cancel (I am OK)
+                </button>
+
+                <!-- Immediate Call Action -->
+                <button onclick="triggerEmergencyCall()"
+                    class="w-full py-6 rounded-clay bg-clay-danger border-2 border-white/30 text-white text-2xl font-black flex items-center justify-center gap-3">
+                    <span class="material-symbols-outlined text-3xl">call</span>
+                    Call
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="view-emergency-triggered"
+        class="page-hidden relative flex min-h-screen max-w-md mx-auto w-full flex-col overflow-x-hidden bg-background-dark font-display text-white">
+        <!-- Top App Bar -->
+        <div class="flex items-center p-4 pb-2 justify-between">
+            <div class="text-white flex size-12 shrink-0 items-center justify-center bg-white/10 rounded-full">
+                <span class="material-symbols-outlined text-3xl">emergency_home</span>
+            </div>
+            <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">
+                Emergency Protocol</h2>
+        </div>
+
+        <!-- Emergency Alert Header -->
+        <div class="flex flex-col items-center px-6 pt-6 pb-4">
+            <div
+                class="size-24 rounded-full bg-emergency-red flex items-center justify-center mb-6 pulse-red shadow-lg shadow-emergency-red/40 border-4 border-background-dark">
+                <span class="material-symbols-outlined text-white text-6xl">priority_high</span>
+            </div>
+            <h1 class="text-white tracking-tight text-[36px] font-black leading-tight text-center text-shadow-sm">
+                EMERGENCY<br>TRIGGERED</h1>
+            <p class="text-white/70 text-lg font-bold text-center mt-2">Check-in missed. Protocol activated.</p>
+        </div>
+
+        <!-- Monitoring Status Card -->
+        <div class="px-4 py-2">
+            <div class="flex items-center gap-4 rounded-xl p-5 bg-white/5 border border-white/10 shadow-lg">
+                <div class="relative">
+                    <span class="material-symbols-outlined text-emergency-red text-3xl monitor-active">videocam</span>
+                    <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emergency-red opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emergency-red"></span>
+                    </span>
+                </div>
+                <div class="flex flex-col">
+                    <p class="text-white text-base font-black leading-none mb-1">Live Audio/Video Active</p>
+                    <p class="text-white/60 text-sm font-medium">Environmental monitoring streaming.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Reassurance Card -->
+        <div class="px-4 py-4">
+            <div class="bg-white rounded-clay p-6 shadow-clay-float">
+                <p class="text-clay-text text-xl font-black leading-snug text-center">Emergency contacts have been
+                    notified.</p>
+                <p class="text-clay-subtext text-sm text-center mt-2 font-bold">Help is being coordinated right now.</p>
+            </div>
+        </div>
+
+        <!-- Contact Status List -->
+        <div class="px-4 flex flex-col gap-3 pb-40">
+            <h3 class="text-white/50 text-xs font-bold uppercase tracking-widest px-1 mt-4">Responder Status</h3>
+            <!-- Sarah -->
+            <div class="flex items-center justify-between bg-white/10 border border-white/5 rounded-clay p-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-12 rounded-full bg-clay-primary/20 flex items-center justify-center border border-white/10">
+                        <span class="material-symbols-outlined text-clay-primary text-xl">person</span>
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-sm">Sarah (Daughter)</p>
+                        <p class="text-white/60 text-xs font-medium">Primary Contact</p>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-2 px-3 py-1 bg-status-green/20 rounded-full border border-status-green/20">
+                    <span class="material-symbols-outlined text-status-green text-sm">check_circle</span>
+                    <span class="text-status-green text-xs font-black">NOTIFIED</span>
+                </div>
+            </div>
+
+            <!-- Dr. Miller -->
+            <div class="flex items-center justify-between bg-white/10 border border-white/5 rounded-clay p-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="size-12 rounded-full bg-clay-primary/20 flex items-center justify-center border border-white/10">
+                        <span class="material-symbols-outlined text-clay-primary text-xl">medical_services</span>
+                    </div>
+                    <div>
+                        <p class="text-white font-bold text-sm">Dr. Miller</p>
+                        <p class="text-white/60 text-xs font-medium">Physician</p>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10 animate-pulse">
+                    <span class="material-symbols-outlined text-white text-sm animate-spin">call</span>
+                    <span class="text-white text-xs font-black uppercase">Calling...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Footer Actions -->
+        <div
+            class="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background-dark via-background-dark/95 to-transparent z-20">
+            <div class="flex flex-col gap-4 max-w-md mx-auto">
+                <!-- Large Emergency Action -->
+                <button onclick="navigateTo('view-live-home')"
+                    class="clay-btn-danger w-full py-5 text-xl flex items-center justify-center gap-3 shadow-lg shadow-emergency-red/20">
+                    <span class="material-symbols-outlined text-2xl">call</span>
+                    <span class="font-black">CALL EMERGENCY SERVICES</span>
+                </button>
+                <!-- "I'm Safe" Dismissal -->
+                <button onclick="navigateTo('view-dashboard')"
+                    class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-xl border border-white/10 transition-all active:scale-95">
+                    I AM SAFE (CANCEL ALERT)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 11: LIVE HOME -->
+    <div id="view-live-home"
+        class="page-hidden relative flex h-screen max-w-md mx-auto w-full flex-col overflow-hidden bg-wave-pattern text-gray-800 font-display">
+        <!-- TopAppBar -->
+        <div
+            class="flex items-center bg-clay-bg/90 p-4 pb-2 justify-between border-b border-white/20 shrink-0 backdrop-blur-md z-10">
+            <button
+                class="text-clay-text flex size-10 shrink-0 items-center justify-center rounded-clay bg-clay-card shadow-clay-btn active:shadow-clay-inner transition-all"
+                onclick="navigateTo('view-dashboard')">
+                <span class="material-symbols-outlined">arrow_back_ios_new</span>
+            </button>
+            <div class="flex flex-col items-center flex-1">
+                <h2 class="text-clay-text text-lg font-extrabold leading-tight tracking-tight flex items-center gap-2">
+                    <span class="size-3 rounded-full bg-clay-danger pulse-red shadow-clay-float"></span>
+                    Live: Martha’s Home
+                </h2>
+                <div class="flex items-center gap-1 mt-0.5">
+                    <span class="material-symbols-outlined text-clay-success size-4 !text-[14px]">sensors</span>
+                    <span class="text-[10px] font-bold text-clay-primary uppercase tracking-widest">Connected •
+                        1080p</span>
+                </div>
+            </div>
+            <div class="flex w-10 items-center justify-end">
+                <button
+                    class="flex items-center justify-center rounded-clay size-10 bg-clay-card shadow-clay-btn text-clay-text active:shadow-clay-inner transition-all">
+                    <span class="material-symbols-outlined">settings</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto pb-40 px-4">
+            <!-- MediaPlayer: Live Video Feed -->
+            <div class="pt-6 pb-4">
+                <div class="relative flex flex-col items-center justify-center bg-black aspect-video rounded-clay overflow-hidden group border-4 border-clay-bg shadow-clay-float"
+                    data-alt="Live video stream of a sunny living room"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuB32vXlE53znqPjJdfE3CxkfoUOJIDDRHnt0Q7jTmTiyb92r9yyFFq6ndedQzHwNkh3MXUqzy1Rl0IRg-p5-6SfC_6GIuMCz6h3vSntWZKldzSZWqHxzUAdE25hiA9g1Usu33S1SUVLb0-P2DnJzhsYkHMeR7zHCTkkJCKd6lxLxtm9f9vOlDesYiF9t6adcP8OfszuwWSb_P87xM_Oy9RpbjIBkt1yqIildIUVBm5sTA7ip-5G1j3GDot1GLnygtm91jvSnrXLjD"); background-size: cover; background-position: center;'>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20"></div>
+                    <button
+                        class="relative z-10 flex shrink-0 items-center justify-center rounded-full size-16 bg-white/20 backdrop-blur-md text-white border-2 border-white/50 shadow-lg hover:scale-110 transition-transform">
+                        <span class="material-symbols-outlined !text-[32px] translate-x-0.5">play_arrow</span>
+                    </button>
+                    <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <button class="bg-black/40 backdrop-blur-sm p-2 rounded-lg text-white hover:bg-black/60">
+                                <span class="material-symbols-outlined">volume_up</span>
+                            </button>
+                            <span
+                                class="text-white text-xs font-bold bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md border border-white/20">Living
+                                Room Cam</span>
+                        </div>
+                        <button class="bg-black/40 backdrop-blur-sm p-2 rounded-lg text-white hover:bg-black/60">
+                            <span class="material-symbols-outlined">fullscreen</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ActionPanel: Emergency Alert -->
+            <div class="py-2">
+                <div class="clay-card p-5 border-l-4 border-clay-danger flex flex-col items-start gap-4">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-clay-danger/10 text-clay-danger p-3 rounded-full shadow-clay-inner">
+                            <span class="material-symbols-outlined !text-[28px]">notification_important</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <p class="text-clay-danger text-lg font-black leading-tight">Missed Check-in</p>
+                            <p class="text-clay-subtext text-sm font-bold leading-normal">Martha missed her 9:00 AM
+                                scheduled check-in today.</p>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full clay-btn-danger text-sm font-bold h-12 shadow-clay-btn active:shadow-clay-inner">
+                        Dismiss Alert
+                    </button>
+                </div>
+            </div>
+
+            <!-- Health Stats Grid -->
+            <div class="flex flex-wrap gap-4 py-4">
+                <!-- Stat Card 1 -->
+                <div class="flex min-w-[140px] flex-1 flex-col gap-3 clay-card p-4">
+                    <div class="flex items-center justify-between">
+                        <span class="material-symbols-outlined text-clay-danger">favorite</span>
+                        <span
+                            class="text-clay-success text-[10px] font-bold bg-clay-success/10 px-2 py-0.5 rounded-full">+2%</span>
+                    </div>
+                    <p class="text-clay-subtext text-xs font-bold uppercase tracking-wider">Heart Rate</p>
+                    <p class="text-clay-text tracking-tight text-3xl font-black leading-tight">72
+                        <span class="text-base font-bold text-clay-subtext">BPM</span>
+                    </p>
+                </div>
+                <!-- Stat Card 2 -->
+                <div class="flex min-w-[140px] flex-1 flex-col gap-3 clay-card p-4">
+                    <div class="flex items-center justify-between">
+                        <span class="material-symbols-outlined text-clay-primary">thermostat</span>
+                        <span
+                            class="text-clay-primary text-[10px] font-bold bg-clay-primary/10 px-2 py-0.5 rounded-full">Stable</span>
+                    </div>
+                    <p class="text-clay-subtext text-xs font-bold uppercase tracking-wider">Room Temp</p>
+                    <p class="text-clay-text tracking-tight text-3xl font-black leading-tight">71°<span
+                            class="text-base font-bold text-clay-subtext">F</span></p>
+                </div>
+                <!-- Stat Card 3 -->
+                <div class="flex min-w-full flex-col gap-3 clay-card p-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-clay-accent">directions_walk</span>
+                            <p class="text-clay-subtext text-xs font-bold uppercase tracking-wider">Last Activity</p>
+                        </div>
+                        <span
+                            class="text-clay-subtext text-[10px] font-bold bg-clay-bg px-2 py-0.5 rounded-full shadow-clay-inner">Just
+                            now</span>
+                    </div>
+                    <div class="flex items-baseline justify-between transition-colors">
+                        <p class="text-clay-text tracking-tight text-xl font-bold leading-tight">24m ago</p>
+                        <p class="text-clay-primary text-sm font-bold">in Kitchen</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ListItem: Activity Log Preview -->
+            <div class="py-2 mb-6">
+                <div class="clay-card p-0 overflow-hidden">
+                    <div class="flex items-center gap-4 px-4 py-4 justify-between border-b border-white/40">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="text-clay-primary flex items-center justify-center rounded-clay bg-clay-bg shadow-clay-inner shrink-0 size-12">
+                                <span class="material-symbols-outlined">kitchen</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-clay-text text-sm font-bold line-clamp-1">Kitchen Sensor</p>
+                                <p class="text-clay-subtext text-xs font-bold line-clamp-1">No motion since 8:36 AM</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            <p
+                                class="text-clay-success text-[10px] font-bold bg-clay-success/10 px-2 py-1 rounded-full border border-clay-success/20">
+                                Active</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 px-4 py-4 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="text-clay-primary flex items-center justify-center rounded-clay bg-clay-bg shadow-clay-inner shrink-0 size-12">
+                                <span class="material-symbols-outlined">door_front</span>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-clay-text text-sm font-bold line-clamp-1">Front Door</p>
+                                <p class="text-clay-subtext text-xs font-bold line-clamp-1">Locked at 7:15 AM</p>
+                            </div>
+                        </div>
+                        <div class="shrink-0">
+                            <p class="text-clay-subtext text-[10px] font-bold opacity-70">Secured</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Action Footer -->
+        <div
+            class="absolute bottom-0 left-0 right-0 bg-clay-bg/90 backdrop-blur-xl border-t border-white/20 p-6 pb-8 flex gap-4 z-20">
+            <button
+                class="flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden rounded-clay h-20 bg-clay-primary text-white shadow-clay-float active:shadow-clay-inner transition-all hover:-translate-y-1">
+                <span class="material-symbols-outlined !text-[28px]">call</span>
+                <span class="text-xs font-black uppercase tracking-widest">Call Martha</span>
+            </button>
+            <button
+                class="flex-1 flex flex-col items-center justify-center gap-1 cursor-pointer overflow-hidden rounded-clay h-20 bg-clay-danger text-white shadow-clay-float active:shadow-clay-inner transition-all hover:-translate-y-1">
+                <span class="material-symbols-outlined !text-[28px]">emergency_share</span>
+                <span class="text-xs font-black uppercase tracking-widest">SOS Services</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function sendOkSms() {
+            const phoneNumber = "6369557647";
+            const message = "I'am fine with dailt task";
+
+            // Detect iOS for specific delimiter
+            const ua = navigator.userAgent.toLowerCase();
+            const isiOS = /iphone|ipad|ipod/.test(ua);
+            const delimiter = isiOS ? '&' : '?';
+
+            window.location.href = `sms:${phoneNumber}${delimiter}body=${encodeURIComponent(message)}`;
+        }
+
+        function initiateEmergencyCall() {
+            alert("call has initiated");
+            navigateTo('view-dashboard');
+        }
+
+        function resetContactForm() {
+            const name = document.getElementById('contactName');
+            const phone = document.getElementById('contactPhone');
+            const relation = document.getElementById('contactRelation');
+
+            if (name) name.value = '';
+            if (phone) phone.value = '';
+            if (relation) relation.selectedIndex = 0;
+
+            alert("Data reset! You can now enter a new contact.");
+        }
+
+        function triggerEmergencyCall() {
+            const phoneNumber = "6369557647";
+            alert("Emergency call initiated to " + phoneNumber);
+            window.location.href = `tel:${phoneNumber}`;
+        }
+
+        function toggleCheckinTimings() {
+            const freq = document.getElementById('checkinFrequency').value;
+            const container = document.getElementById('timingContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            const labels = ['Morning Check-in', 'Afternoon Check-in', 'Evening Check-in'];
+            const defaults = ['09:00', '02:00', '20:00'];
+            const icons = ['wb_sunny', 'sunny', 'bedtime'];
+
+            for (let i = 0; i < freq; i++) {
+                container.innerHTML += `
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2 ml-1">
+                            <span class="material-symbols-outlined text-[14px] text-clay-primary">${icons[i]}</span>
+                            <label class="block text-[10px] font-bold text-clay-subtext uppercase tracking-wider">${labels[i]}</label>
+                        </div>
+                        <input type="time" value="${defaults[i]}" 
+                            class="w-full clay-input text-sm font-bold text-clay-text px-4 py-3" />
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize timings on load
+        window.addEventListener('DOMContentLoaded', () => {
+            toggleCheckinTimings();
+        });
+
+        function sendSafetySms() {
+            const phoneNumber = "6369557647";
+            const message = encodeURIComponent("I'm fine with todays work");
+            window.location.href = `sms:${phoneNumber}?body=${message}`;
+        }
+
+        let emergencyTimer;
+        let emergencyTimeLeft = 300; // 5 minutes
+
+        function startEmergencyTimer() {
+            emergencyTimeLeft = 300;
+            updateTimerDisplay();
+            emergencyTimer = setInterval(() => {
+                emergencyTimeLeft--;
+                if (emergencyTimeLeft <= 0) {
+                    clearInterval(emergencyTimer);
+                    triggerEmergencyCall();
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function stopEmergencyTimer() {
+            clearInterval(emergencyTimer);
+        }
+
+        function cancelEmergencyTimer() {
+            stopEmergencyTimer();
+            alert("Protocol cancelled. Glad you're OK!");
+            navigateTo('view-dashboard');
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(emergencyTimeLeft / 60);
+            const seconds = emergencyTimeLeft % 60;
+            const display = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+            const el = document.getElementById('emergency-timer-display');
+            if (el) el.textContent = display;
+        }
+
+        function navigateTo(pageId) {
+            // Stop timer if leaving the timer page
+            stopEmergencyTimer();
+
+            // Update dynamic content if needed
+            if (pageId === 'view-missed-alert-detail') {
+                const now = new Date();
+                const next = new Date(now.getTime() + 15 * 60000); // Add 15 minutes
+                const hours = next.getHours();
+                const minutes = next.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+                const timeEl = document.getElementById('next-checkin-time');
+                if (timeEl) {
+                    timeEl.textContent = `${displayHours}:${displayMinutes} ${ampm}`;
+                }
+            }
+
+            if (pageId === 'view-emergency-timer') {
+                startEmergencyTimer();
+            }
+
+            // Hide all pages
+            document.querySelectorAll('body > div[id^="view-"]').forEach(el => {
+                el.classList.add('page-hidden');
+            });
+
+            // Show requested page
+            const page = document.getElementById(pageId);
+            if (page) {
+                page.classList.remove('page-hidden');
+                // Scroll to top
+                window.scrollTo(0, 0);
+
+                // Toggle global dark mode class for SOS page
+                if (pageId === 'view-sos') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    // Ensure normal light mode background for other pages
+                    document.body.classList.add('bg-elder-bg');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
